@@ -11,7 +11,7 @@ const express = require('express');
 const App = express();
 const port = 3001;
 
-const notes = [
+let notes = [
     {
         id: 1,
         content: 'HTML is easy',
@@ -29,12 +29,25 @@ const notes = [
     }
 ];
 
-App.get('/', (req, res) => {
-    res.send('<h1>Hellow world</h1>')
+// Getting all the notes
+App.get('/api/notes', (req, res) => {
+    res.json(notes);
 });
 
-App.get("/api/notes", (req, res) => {
-    res.json(notes);
+// showing a specipfic resources
+App.get('/api/notes/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const note = notes.find(note => note.id === id) //for finding a specific item
+
+    note ? res.json(note) : res.status(404).json({ error: 'Note not found' });
+});
+
+// deleting a specigic resource
+App.delete('/api/notes/:id', (req, res) => {
+    const id = Number(req.params.id);
+    notes = notes.filter(note => note.id !== id); //for filtering out an item
+
+    res.status(200).end();
 });
 
 App.listen(port, () => {
